@@ -1,0 +1,8 @@
+Metric,Value
+Original Rows,284807
+Rows After Cleaning,283726
+Removed Duplicates,1081
+Missing Values,0
+Negative Amounts,0
+Fraud Cases,473
+Normal Cases,283253
