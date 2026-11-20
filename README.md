@@ -1,154 +1,152 @@
-
 # Credit Card Fraud Detection
 
-## 1. Project Overview
-This project aims to detect fraudulent credit card transactions using Machine Learning techniques.
+An end-to-end machine learning project that identifies potentially fraudulent credit card transactions. It covers data exploration, preprocessing, model training, validation-based threshold selection, test-set evaluation, and an interactive Streamlit application.
 
-The dataset contains credit card transactions made by European cardholders. The main objective is to distinguish between legitimate and fraudulent transactions.
+## Project highlights
 
-## 2. Dataset Description
-The dataset contains 284,807 transactions and 31 columns.
+- Explores a highly imbalanced transaction dataset.
+- Compares Logistic Regression and Random Forest classifiers.
+- Uses class weighting to address class imbalance.
+- Selects the Random Forest decision threshold on a validation split (not on the test set).
+- Reports Accuracy, Precision, Recall, F1-score, PR-AUC, ROC-AUC, and confusion matrices.
+- Provides a Streamlit interface for CSV-based predictions.
 
-- Time: Number of seconds elapsed between each transaction and the first transaction.
-- V1 to V28: Anonymized numerical features obtained through PCA.
-- Amount: Transaction amount.
-- Class: Target variable.
-  - 0: Normal transaction.
-  - 1: Fraudulent transaction.
+## Dataset
 
-The dataset is highly imbalanced because fraudulent transactions represent a very small percentage of all transactions.
+This project uses the **Credit Card Fraud Detection** dataset from Kaggle:
 
-## 3. Project Workflow
-The project follows these main stages:
+[Download the dataset from Kaggle](https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud)
 
-1. Data Exploration
-2. Exploratory Data Analysis (EDA)
-3. Data Cleaning and Preprocessing
-4. Train, Validation, and Test Split
-5. Model Training
-6. Threshold Optimization
-7. Model Evaluation
-8. Interactive Prediction using Streamlit
+After downloading and extracting it, place the file at:
 
-## 4. Data Preprocessing
-- Checked missing values.
-- Checked duplicate records.
-- Removed duplicate transactions.
-- Scaled the Time and Amount features.
-- Used stratified splitting to preserve the class distribution.
+```text
+data/
+└── raw/
+    └── creditcard.csv
+```
 
-## 5. Machine Learning Models
-Two classification models were trained:
+The dataset contains 284,807 transactions and 31 columns:
 
-### Logistic Regression
-A classification algorithm used as a baseline model.
+- `Time`: seconds elapsed since the first transaction in the dataset.
+- `V1`–`V28`: anonymized features produced using PCA.
+- `Amount`: transaction amount.
+- `Class`: target label (`0` = legitimate, `1` = fraudulent).
 
-### Random Forest
-An ensemble learning algorithm that combines multiple decision trees to improve prediction performance.
+The dataset is highly imbalanced. The original dataset contains 492 fraud cases (about 0.173%).
 
-Class weighting was used to help address the class imbalance problem.
+> The dataset is not included in this repository. You must download it from Kaggle and provide it locally before running the training pipeline.
 
-## 6. Threshold Optimization
-The Random Forest classification threshold was optimized using the validation dataset.
+## Project workflow
 
-The selected threshold was:
+1. **Data exploration** – inspect dimensions, data types, missing values, duplicates, and class distribution.
+2. **Exploratory data analysis** – generate plots describing transaction amounts, time, class balance, and feature correlations.
+3. **Data cleaning** – remove exact duplicate rows and generate a data-quality report.
+4. **Data splitting** – create stratified training, validation, and test partitions (70% / 15% / 15%).
+5. **Model training** – train Logistic Regression and Random Forest pipelines.
+6. **Threshold selection** – select a Random Forest classification threshold using validation F1-score.
+7. **Evaluation** – evaluate both models on the held-out test partition and save a comparison report and confusion matrices.
+8. **Interactive inference** – load the saved Random Forest pipeline in Streamlit and predict transactions from a CSV file.
 
-0.09
+The `Time` and `Amount` features are standardized inside the model pipeline. The remaining features are passed through unchanged.
 
-The threshold was selected based on the best F1-score on the validation set.
+## Test-set results
 
-## 7. Model Evaluation
-The models were evaluated using:
+The latest recorded Random Forest test metrics are:
 
-- Accuracy
-- Precision
-- Recall
-- F1-score
-- ROC-AUC
-- PR-AUC
-- Confusion Matrix
+| Metric | Score |
+|---|---:|
+| Accuracy | 0.9993 |
+| Precision | 0.7917 |
+| Recall | 0.8028 |
+| F1-score | 0.7972 |
 
-Precision, Recall, and F1-score are particularly important because the dataset is highly imbalanced.
+The Random Forest threshold selected on the validation set in that run was **0.09**.
 
-### Random Forest Test Results
+These values describe the recorded run on the held-out test split; they are not a guarantee of performance on new data. Accuracy alone can be misleading for this imbalanced dataset, so Precision, Recall, F1-score, and PR-AUC are also considered.
 
-- Accuracy: 0.9993
-- Precision: 0.7917
-- Recall: 0.8028
-- F1-score: 0.7972
-
-These results were obtained using the held-out test dataset.
-
-## 8. Interactive Application
-A Streamlit application was developed to allow users to:
-
-- Upload transaction data in CSV format.
-- Generate fraud predictions.
-- View normal and fraudulent transaction counts.
-- View evaluation metrics when actual labels are available.
-- Inspect prediction results.
-- Download the prediction results as a CSV file.
-
-## 9. Project Structure
+## Repository structure
 
 ```text
 Credit-Card-Fraud-Detection/
-│
 ├── data/
-│   ├── raw/
-│   │   └── creditcard.csv
-│   └── processed/
-│       └── test_transactions.csv
-│
-├── models/
-│   ├── logistic_regression.joblib
-│   ├── random_forest.joblib
-│   └── random_forest_threshold.json
-│
-├── reports/
-│   ├── data_quality_report.csv
-│   └── model_comparison.csv
-│
+│   ├── raw/                 # Place creditcard.csv here (not tracked)
+│   └── processed/           # Generated test split (not tracked)
+├── models/                  # Generated model artifacts
+├── reports/                 # Generated CSV reports
 ├── src/
 │   ├── data_exploration.py
 │   ├── eda_analysis.py
 │   ├── data_cleaning.py
 │   ├── model_training.py
 │   └── model_evaluation.py
-│
-├── visualizations/
-├── notebooks/
-├── app.py
-├── main.py
+├── visualizations/          # Generated charts
+├── app.py                   # Streamlit application
+├── main.py                  # End-to-end pipeline
 ├── requirements.txt
 └── README.md
 ```
 
-## 10. Installation and Usage
+Model files, reports, processed datasets, and visualizations are generated by running the pipeline. Large/private data files are intentionally excluded from Git.
 
-Install the required libraries:
+## Setup
 
-```bash
-pip install -r requirements.txt
-```
+Python 3.10 or newer is recommended.
 
-Run the complete machine learning pipeline:
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/MohamedElhadry/Credit-Card-Fraud-Detection.git
+   cd Credit-Card-Fraud-Detection
+   ```
+
+2. (Recommended) Create and activate a virtual environment:
+
+   **Windows PowerShell**
+   ```powershell
+   python -m venv .venv
+   .\.venv\Scripts\Activate.ps1
+   ```
+
+   **macOS / Linux**
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   python -m pip install -r requirements.txt
+   ```
+
+4. Download the Kaggle dataset and place `creditcard.csv` in `data/raw/`.
+
+## Run the project
+
+Run the complete exploration, cleaning, training, and evaluation pipeline:
 
 ```bash
 python main.py
 ```
 
-Run the Streamlit application:
+This generates model artifacts in `models/`, reports in `reports/`, a held-out test CSV in `data/processed/`, and charts in `visualizations/`.
+
+Launch the interactive application:
 
 ```bash
 streamlit run app.py
 ```
 
-## 11. Limitations
-- The dataset is highly imbalanced.
-- The dataset contains anonymized features.
-- The model is evaluated on a benchmark dataset and requires further testing before real-world deployment.
-- The selected classification threshold may need adjustment depending on the cost of false positives and false negatives.
+The app requires the generated files `models/random_forest.joblib` and `models/random_forest_threshold.json`. Run `python main.py` first if they do not exist. Upload a CSV containing `Time`, `V1`–`V28`, and `Amount`. If a `Class` column with true labels is included, the app also displays evaluation metrics.
 
-## 12. Conclusion
-This project demonstrates an end-to-end machine learning workflow for credit card fraud detection, including data preprocessing, model training, threshold optimization, evaluation, and interactive predictions.
+## Important notes and limitations
+
+- This is an educational portfolio project using a public benchmark dataset, not a production fraud-detection service.
+- The dataset's PCA-transformed features are anonymized and may not map directly to real-world transaction attributes.
+- The selected threshold optimizes validation F1-score. A real deployment would select a threshold based on business costs, review capacity, and the relative impact of false positives and false negatives.
+- Evaluation metrics are meaningful only when the uploaded `Class` column contains the actual labels for the same transactions.
+- Do not upload the original Kaggle dataset or other sensitive transaction data to a public repository.
+
+## Tech stack
+
+Python · pandas · NumPy · scikit-learn · Matplotlib · Seaborn · Joblib · Streamlit
